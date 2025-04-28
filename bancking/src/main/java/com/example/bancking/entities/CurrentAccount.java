@@ -5,7 +5,7 @@ import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-@DiscriminatorValue("CA")
+//@DiscriminatorValue("CA")
 
 @Entity
 @Data
