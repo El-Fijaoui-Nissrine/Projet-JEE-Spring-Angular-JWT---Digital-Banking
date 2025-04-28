@@ -1,10 +1,7 @@
 package com.example.bancking.entities;
 
 import com.example.bancking.enums.AccountStatus;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,11 +12,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="TYPE",length = 4)
 public class BanckAccount {
     @Id
     private String id;
     private double balance;
     private Date createdAt;
+    @Enumerated(EnumType.STRING)
     private AccountStatus status;
     @ManyToOne
     private  Customer customer;
