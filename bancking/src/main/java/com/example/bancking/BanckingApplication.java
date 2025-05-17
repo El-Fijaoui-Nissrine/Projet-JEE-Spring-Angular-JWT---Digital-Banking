@@ -1,20 +1,26 @@
 package com.example.bancking;
 
-import com.example.bancking.entities.AccountOperation;
-import com.example.bancking.entities.CurrentAccount;
-import com.example.bancking.entities.Customer;
-import com.example.bancking.entities.SavingAccount;
+import com.example.bancking.dtos.BanckAccountDTO;
+import com.example.bancking.dtos.CurrentBanckAccountDTO;
+import com.example.bancking.dtos.CustomerDTO;
+import com.example.bancking.dtos.SavingBanckAccountDTO;
+import com.example.bancking.entities.*;
 import com.example.bancking.enums.AccountStatus;
 import com.example.bancking.enums.OperationType;
+import com.example.bancking.exceptions.BalanceNotSufficientException;
+import com.example.bancking.exceptions.BankAccountNotFoundException;
+import com.example.bancking.exceptions.CustomerNotFoundException;
 import com.example.bancking.repositories.AccountOperationRepository;
 import com.example.bancking.repositories.BankAccountRepository;
 import com.example.bancking.repositories.CustomerRepository;
+import com.example.bancking.services.BankAccountService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -24,7 +30,45 @@ public class BanckingApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BanckingApplication.class, args);
 	}
-@Bean
+//@Bean
+		CommandLineRunner commandLineRunner(BankAccountService bankAccountService){
+		return args -> {
+			Stream.of("Amine","Ali","Nissrine","Zineb").forEach(name->{
+				CustomerDTO customer=new CustomerDTO();
+				customer.setName(name);
+				customer.setEmail(name+"@gmail.com");
+				bankAccountService.saveCustomer(customer);
+			});
+bankAccountService.listCustomer().forEach(customer -> {
+    try {
+        bankAccountService.saveCurrentBankAccount(Math.random()*90000,9000,customer.getId());
+		bankAccountService.saveSavingBankAccount(Math.random()*120000,5.5,customer.getId());
+		List<BanckAccountDTO> banckAccountList= bankAccountService.listBankAccount();
+       for (BanckAccountDTO banckAccount:banckAccountList){
+		   for (int i=0;i<10;i++){
+			   String accountId;
+			   if (banckAccount instanceof SavingBanckAccountDTO){
+				   accountId=((SavingBanckAccountDTO) banckAccount).getId();
+			   }else {
+				   accountId=((CurrentBanckAccountDTO) banckAccount).getId();
+
+			   }
+			   bankAccountService.credit(accountId,1000+Math.random()*1200001,"credit");
+		       bankAccountService.debit(accountId,1000+Math.random()*90000,"debit");
+		   }
+	   }
+
+    } catch (CustomerNotFoundException e) {
+        e.printStackTrace();
+    } catch (BankAccountNotFoundException | BalanceNotSufficientException e) {
+        e.printStackTrace();
+    }
+});
+
+
+		};
+}
+	//@Bean
 	CommandLineRunner start(CustomerRepository customerRepository,
 							BankAccountRepository bankAccountRepository,
 							AccountOperationRepository accountOperationRepository){
