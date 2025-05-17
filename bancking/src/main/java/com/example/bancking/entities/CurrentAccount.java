@@ -13,4 +13,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CurrentAccount extends BanckAccount{
     private double overDraft;
+
 }
