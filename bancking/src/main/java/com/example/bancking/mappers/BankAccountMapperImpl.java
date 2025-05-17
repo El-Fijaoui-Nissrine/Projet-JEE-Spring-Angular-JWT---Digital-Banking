@@ -1,8 +1,10 @@
 package com.example.bancking.mappers;
 
+import com.example.bancking.dtos.AccountOperationDTO;
 import com.example.bancking.dtos.CurrentBanckAccountDTO;
 import com.example.bancking.dtos.CustomerDTO;
 import com.example.bancking.dtos.SavingBanckAccountDTO;
+import com.example.bancking.entities.AccountOperation;
 import com.example.bancking.entities.CurrentAccount;
 import com.example.bancking.entities.Customer;
 import com.example.bancking.entities.SavingAccount;
@@ -49,4 +51,10 @@ public SavingBanckAccountDTO fromSavingBankAccount(SavingAccount savingAccount){
         currentAccount.setCustomer(fromCustomerDTO(currentAccountDTO.getCustomerDTO()));
         return currentAccount;
     }
+public AccountOperationDTO fromAccountOperation(AccountOperation accountOperation){
+        AccountOperationDTO accountOperationDTO=new AccountOperationDTO();
+        BeanUtils.copyProperties(accountOperation,accountOperationDTO);
+        return  accountOperationDTO;
+}
+
 }

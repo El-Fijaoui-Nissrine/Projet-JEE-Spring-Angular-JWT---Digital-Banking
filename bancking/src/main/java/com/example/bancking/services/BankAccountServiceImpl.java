@@ -1,8 +1,5 @@
 package com.example.bancking.services;
-import com.example.bancking.dtos.BanckAccountDTO;
-import com.example.bancking.dtos.CurrentBanckAccountDTO;
-import com.example.bancking.dtos.CustomerDTO;
-import com.example.bancking.dtos.SavingBanckAccountDTO;
+import com.example.bancking.dtos.*;
 import com.example.bancking.entities.*;
 import com.example.bancking.enums.OperationType;
 import com.example.bancking.exceptions.BalanceNotSufficientException;
@@ -14,6 +11,8 @@ import com.example.bancking.repositories.BankAccountRepository;
 import com.example.bancking.repositories.CustomerRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -161,4 +160,28 @@ return bankAccountMapper.fromCustomer(customer);
 public void deletCustomer(Long customerId){
         customerRepository.deleteById(customerId);
     }
+    @Override
+    public List<AccountOperationDTO> accountHistory(String accountId){
+        List<AccountOperation> accountOperations=accountOperationRepository.findByBanckAccountId(accountId);
+        List<AccountOperationDTO> accountOperationDTOS=accountOperations.stream().map(accountOperation ->
+          bankAccountMapper.fromAccountOperation(accountOperation)).collect(Collectors.toList());
+        return  accountOperationDTOS;
+}
+@Override
+public AccountHistoryDTO  getAccountHistory(String accountId, int page, int size) throws BankAccountNotFoundException {
+ Page<AccountOperation> accountOperationPage= accountOperationRepository.findByBanckAccountId(accountId, PageRequest.of(page,size));
+BanckAccount banckAccount=bankAccountRepository.findById(accountId).orElse(null);
+if (banckAccount==null) throw new BankAccountNotFoundException("account not found");
+Page<AccountOperation> accountOperations=accountOperationRepository.findByBanckAccountId(accountId,PageRequest.of(page,size));
+AccountHistoryDTO accountOperationDTO=new AccountHistoryDTO();
+List<AccountOperationDTO> accountOperationDTOS=accountOperations.getContent().stream().map(op->bankAccountMapper.fromAccountOperation(op)).collect(Collectors.toList());
+      accountOperationDTO.setAccountOperationDTOS(accountOperationDTOS);
+      accountOperationDTO.setAccountId(banckAccount.getId());
+      accountOperationDTO.setBalance(banckAccount.getBalance());
+      accountOperationDTO.setCurrentPage(page);
+      accountOperationDTO.setPageSize(size);
+      accountOperationDTO.setTotalPages(accountOperations.getTotalPages());
+ return accountOperationDTO;
+  }
+
 }

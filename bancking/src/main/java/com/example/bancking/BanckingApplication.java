@@ -30,7 +30,7 @@ public class BanckingApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BanckingApplication.class, args);
 	}
-//@Bean
+@Bean
 		CommandLineRunner commandLineRunner(BankAccountService bankAccountService){
 		return args -> {
 			Stream.of("Amine","Ali","Nissrine","Zineb").forEach(name->{
@@ -43,28 +43,26 @@ bankAccountService.listCustomer().forEach(customer -> {
     try {
         bankAccountService.saveCurrentBankAccount(Math.random()*90000,9000,customer.getId());
 		bankAccountService.saveSavingBankAccount(Math.random()*120000,5.5,customer.getId());
-		List<BanckAccountDTO> banckAccountList= bankAccountService.listBankAccount();
-       for (BanckAccountDTO banckAccount:banckAccountList){
-		   for (int i=0;i<10;i++){
-			   String accountId;
-			   if (banckAccount instanceof SavingBanckAccountDTO){
-				   accountId=((SavingBanckAccountDTO) banckAccount).getId();
-			   }else {
-				   accountId=((CurrentBanckAccountDTO) banckAccount).getId();
 
-			   }
-			   bankAccountService.credit(accountId,1000+Math.random()*1200001,"credit");
-		       bankAccountService.debit(accountId,1000+Math.random()*90000,"debit");
-		   }
-	   }
 
     } catch (CustomerNotFoundException e) {
         e.printStackTrace();
-    } catch (BankAccountNotFoundException | BalanceNotSufficientException e) {
-        e.printStackTrace();
     }
 });
+			List<BanckAccountDTO> banckAccountList= bankAccountService.listBankAccount();
+			for (BanckAccountDTO banckAccount:banckAccountList){
+				for (int i=0;i<10;i++){
+					String accountId;
+					if (banckAccount instanceof SavingBanckAccountDTO){
+						accountId=((SavingBanckAccountDTO) banckAccount).getId();
+					}else {
+						accountId=((CurrentBanckAccountDTO) banckAccount).getId();
 
+					}
+					bankAccountService.credit(accountId,1000+Math.random()*1200001,"credit");
+					bankAccountService.debit(accountId,1000+Math.random()*90000,"debit");
+				}
+			}
 
 		};
 }

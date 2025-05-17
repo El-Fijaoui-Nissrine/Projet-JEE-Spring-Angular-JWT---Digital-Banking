@@ -1,9 +1,6 @@
 package com.example.bancking.services;
 
-import com.example.bancking.dtos.BanckAccountDTO;
-import com.example.bancking.dtos.CurrentBanckAccountDTO;
-import com.example.bancking.dtos.CustomerDTO;
-import com.example.bancking.dtos.SavingBanckAccountDTO;
+import com.example.bancking.dtos.*;
 import com.example.bancking.entities.BanckAccount;
 import com.example.bancking.entities.CurrentAccount;
 import com.example.bancking.entities.Customer;
@@ -31,4 +28,8 @@ public interface BankAccountService {
  CustomerDTO updateCustomer(CustomerDTO customerDTO);
 
  void deletCustomer(Long customerId);
+
+ List<AccountOperationDTO> accountHistory(String accountId);
+
+ AccountHistoryDTO  getAccountHistory(String accountId, int page, int size) throws BankAccountNotFoundException;
 }
