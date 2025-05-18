@@ -184,4 +184,13 @@ List<AccountOperationDTO> accountOperationDTOS=accountOperations.getContent().st
  return accountOperationDTO;
   }
 
+    @Override
+    public List<CustomerDTO> searchCustomers(String keyword) {
+        List<Customer> customerList= customerRepository.searchCustomers(keyword);
+        List<CustomerDTO> customerDTOList=customerList.stream()
+                .map(customer -> bankAccountMapper.fromCustomer(customer))
+                .collect(Collectors.toList());
+        return customerDTOList;
+    }
+
 }
