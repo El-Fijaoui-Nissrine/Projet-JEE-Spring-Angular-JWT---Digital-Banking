@@ -62,7 +62,7 @@ public class SecurityConfig {
                 .sessionManagement(sm->sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(csrf->csrf.disable())
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(ar->ar.requestMatchers("/auth/login/**").permitAll())
+                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))                .authorizeHttpRequests(ar->ar.requestMatchers("/auth/login/**","/h2-console/**").permitAll())
                 .authorizeHttpRequests(ar->ar.anyRequest().authenticated())
                 //.httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(oa ->
